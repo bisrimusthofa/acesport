@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"time"
 
 	"github.com/bisrimusthofa/acesport/helper"
@@ -10,6 +11,7 @@ import (
 
 type Service interface {
 	Register(input RegisterUserInput) (User, error)
+	Login(input LoginInput) (User, error)
 }
 
 type service struct {
@@ -40,4 +42,27 @@ func (s *service) Register(input RegisterUserInput) (User, error) {
 	}
 
 	return dataUser, nil
+}
+
+func (s *service) Login(input LoginInput) (User, error) {
+	email := input.Email
+	password := input.Password
+
+	// find by email
+	user, err := s.repository.FindByEmail(email)
+	if err != nil {
+		return user, err
+	}
+
+	if user.Id == "" {
+		return user, errors.New("Email atau Password tidak valid")
+	}
+
+	// matching password
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return user, errors.New("Email atau Password tidak valid")
+	}
+
+	return user, nil
 }

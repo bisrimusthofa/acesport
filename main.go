@@ -21,7 +21,8 @@ func main() {
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
-	api.POST("/users", userController.Register)
+	api.POST("/register", userController.Register)
+	api.POST("/login", userController.Login)
 
 	err = router.Run()
 	helper.PanicIfError(err)
