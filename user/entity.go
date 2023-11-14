@@ -2,6 +2,10 @@ package user
 
 import "time"
 
+const (
+	AvatarPath = "images/avatar/"
+)
+
 type User struct {
 	Id              string    `json:"id"`
 	Name            string    `json:"name"`
@@ -19,4 +23,5 @@ type User struct {
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 	Balance         int       `json:"balance"`
+	Avatar          string    `json:"avatar"`
 }

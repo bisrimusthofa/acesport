@@ -150,3 +150,58 @@ func (controller *UserController) CheckEmailAvailable(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (controller *UserController) UploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		errorMessages := gin.H{"errors": false}
+
+		response := helper.APIResponse(
+			http.StatusUnprocessableEntity,
+			"error",
+			"Failed upload avatar",
+			errorMessages,
+		)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// simpan file
+	avatarPath := user.AvatarPath + file.Filename
+	err = c.SaveUploadedFile(file, user.AvatarPath+file.Filename)
+	if err != nil {
+		errorMessages := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse(
+			http.StatusUnprocessableEntity,
+			"error",
+			"Failed upload avatar",
+			errorMessages,
+		)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	_, err = controller.userService.SaveAvatar("b2f426f3-83fa-421d-9a58-c2c9a4521d2f", avatarPath)
+	if err != nil {
+		errorMessages := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse(
+			http.StatusUnprocessableEntity,
+			"error",
+			"Failed upload avatar",
+			errorMessages,
+		)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	dataResponse := gin.H{"is_uploaded": true}
+	response := helper.APIResponse(
+		http.StatusUnprocessableEntity,
+		"error",
+		"Success upload avatar",
+		dataResponse,
+	)
+	c.JSON(http.StatusOK, response)
+}
