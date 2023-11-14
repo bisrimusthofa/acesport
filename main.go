@@ -23,6 +23,7 @@ func main() {
 
 	api.POST("/register", userController.Register)
 	api.POST("/login", userController.Login)
+	api.POST("/email-checker", userController.CheckEmailAvailable)
 
 	err = router.Run()
 	helper.PanicIfError(err)
