@@ -193,7 +193,8 @@ func (controller *UserController) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	_, err = controller.userService.SaveAvatar("b2f426f3-83fa-421d-9a58-c2c9a4521d2f", avatarPath)
+	userId := c.MustGet("userId").(string)
+	_, err = controller.userService.SaveAvatar(userId, avatarPath)
 	if err != nil {
 		errorMessages := gin.H{"errors": err.Error()}
 
