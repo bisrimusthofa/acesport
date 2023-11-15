@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/bisrimusthofa/acesport/auth"
 	"github.com/bisrimusthofa/acesport/helper"
 	"github.com/bisrimusthofa/acesport/user"
 	"github.com/gin-gonic/gin"
@@ -10,10 +11,14 @@ import (
 
 type UserController struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserController(userService user.Service) *UserController {
-	return &UserController{userService: userService}
+func NewUserController(userService user.Service, authService auth.Service) *UserController {
+	return &UserController{
+		userService: userService,
+		authService: authService,
+	}
 }
 
 func (controller *UserController) Register(c *gin.Context) {
@@ -49,7 +54,9 @@ func (controller *UserController) Register(c *gin.Context) {
 	dataFormated := user.FormatUser(newUser)
 
 	// token
-	dataFormated.Token = "blablabla"
+	token, err := controller.authService.GenerateToken(dataFormated.Id)
+
+	dataFormated.Token = token
 
 	response := helper.APIResponse(
 		http.StatusCreated,
@@ -92,7 +99,11 @@ func (controller *UserController) Login(c *gin.Context) {
 	}
 
 	dataFormated := user.FormatUser(dataUser)
-	dataFormated.Token = "blablabla"
+
+	// token
+	token, err := controller.authService.GenerateToken(dataFormated.Id)
+
+	dataFormated.Token = token
 
 	response := helper.APIResponse(
 		http.StatusAccepted,

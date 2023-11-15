@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/bisrimusthofa/acesport/auth"
 	"github.com/bisrimusthofa/acesport/controller"
 	"github.com/bisrimusthofa/acesport/helper"
 	"github.com/bisrimusthofa/acesport/user"
@@ -16,7 +17,8 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-	userController := controller.NewUserController(userService)
+	authService := auth.NewJwtService()
+	userController := controller.NewUserController(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
