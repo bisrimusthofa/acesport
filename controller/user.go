@@ -210,7 +210,7 @@ func (controller *UserController) UploadAvatar(c *gin.Context) {
 
 	dataResponse := gin.H{"is_uploaded": true}
 	response := helper.APIResponse(
-		http.StatusUnprocessableEntity,
+		http.StatusOK,
 		"error",
 		"Success upload avatar",
 		dataResponse,

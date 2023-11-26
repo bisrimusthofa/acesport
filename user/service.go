@@ -96,7 +96,7 @@ func (s *service) SaveAvatar(id string, filePath string) (User, error) {
 	if user.Id == "" {
 		return user, errors.New("User not Found")
 	}
-	
+
 	updatedUser, err := s.repository.Update(user)
 	if err != nil {
 		return updatedUser, err
