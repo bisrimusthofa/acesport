@@ -1,0 +1,16 @@
+version: '3.7'
+
+networks:
+  mine:
+    external: true
+
+services:
+  acesport_user:
+    container_name: acesport_user
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - mine
+    ports:
+      - "3000:3000"

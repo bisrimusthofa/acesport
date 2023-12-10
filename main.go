@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	dsn := "root:@tcp(localhost:3306)/acesport?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:@tcp(mysql_container:3306)/acesport?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	helper.PanicIfError(err)
 
