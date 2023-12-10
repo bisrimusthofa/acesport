@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	dsn := "root:@tcp(127.0.0.1:3306)/acesport?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:@tcp(localhost:3306)/acesport?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	helper.PanicIfError(err)
 
@@ -32,6 +32,6 @@ func main() {
 	// profile
 	api.POST("/upload-avatar", middleware.AuthMiddleware(authService, userService), userController.UploadAvatar)
 
-	err = router.Run()
+	err = router.Run(":3000")
 	helper.PanicIfError(err)
 }
