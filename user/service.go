@@ -15,6 +15,7 @@ type Service interface {
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	SaveAvatar(id string, filePath string) (User, error)
 	FindById(id string) (User, error)
+	UpdateProfile(id string, input UpdateProfileInput) (User, error)
 }
 
 type service struct {
@@ -116,4 +117,43 @@ func (s *service) FindById(id string) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *service) UpdateProfile(id string, input UpdateProfileInput) (User, error) {
+	user, err := s.repository.FindById(id)
+	if err != nil {
+		return user, err
+	}
+
+	var password []byte
+
+	if input.NewPassword != "" {
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.CurrentPassword))
+
+		if err != nil {
+			return user, errors.New("Password sekarang tidak sesuai")
+		}
+
+		if input.ConfirmPassword != input.NewPassword {
+			return user, errors.New("Konfirmasi Password tidak sesuai")
+		}
+
+		password, err = bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.MinCost)
+		if err != nil {
+			return user, err
+		}
+
+		user.Password = string(password)
+	}
+
+	user.Name = input.Name
+	user.Email = input.Email
+	user.Phone = input.Phone
+
+	userUpdated, err := s.repository.Update(user)
+	if err != nil {
+		return userUpdated, err
+	}
+
+	return userUpdated, nil
 }

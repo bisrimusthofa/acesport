@@ -217,3 +217,52 @@ func (controller *UserController) UploadAvatar(c *gin.Context) {
 	)
 	c.JSON(http.StatusOK, response)
 }
+
+func (controller *UserController) UpdateProfile(c *gin.Context) {
+	var input user.UpdateProfileInput
+
+	// binding json
+	err := c.ShouldBindJSON(&input)
+
+	// check validasi
+	if err != nil {
+		errors := helper.ErrorValidationResponse(err)
+		errorMessages := gin.H{"errors": errors}
+
+		response := helper.APIResponse(
+			http.StatusBadRequest,
+			"error",
+			"The data given was invalid",
+			errorMessages,
+		)
+
+		c.JSON(http.StatusBadRequest, response)
+		panic(err)
+	}
+
+	// transaksi
+	userId := c.MustGet("userId").(string)
+	_, err = controller.userService.UpdateProfile(userId, input)
+	if err != nil {
+		errorMessages := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse(
+			http.StatusUnprocessableEntity,
+			"error",
+			"Failed update profile",
+			errorMessages,
+		)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// response sukses
+	dataResponse := gin.H{"is_updated": true}
+	response := helper.APIResponse(
+		http.StatusOK,
+		"error",
+		"Success Update Profile",
+		dataResponse,
+	)
+	c.JSON(http.StatusOK, response)
+}
